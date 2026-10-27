@@ -1,0 +1,1028 @@
+
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#4f46e5">
+<title>테스트알리미 | 시험 일정 관리</title>
+<style>
+:root {
+  --primary: #4f46e5;
+  --primary-dark: #3730a3;
+  --bg: #f5f7fc;
+  --card: #ffffff;
+  --text: #1e293b;
+  --muted: #64748b;
+  --border: #e2e8f0;
+  --danger: #dc2626;
+  --green: #15803d;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  font-family: "Malgun Gothic", "Apple SD Gothic Neo", sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  font-size: 14px;
+}
+button, input, select, textarea { font: inherit; }
+button { cursor: pointer; }
+.topbar {
+  background: #fff;
+  border-bottom: 1px solid var(--border);
+  padding: 18px 28px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+.brand { display: flex; align-items: center; gap: 12px; }
+.logo {
+  width: 42px; height: 42px;
+  background: var(--primary); color: white;
+  border-radius: 12px;
+  display: grid; place-items: center;
+  font-size: 23px;
+}
+.brand h1 { font-size: 21px; margin: 0 0 4px; }
+.brand p { margin: 0; color: var(--muted); font-size: 12px; }
+.top-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+.container { max-width: 1450px; margin: 0 auto; padding: 26px; }
+.welcome { margin-bottom: 23px; }
+.welcome h2 { margin: 0 0 8px; font-size: 25px; }
+.welcome p { color: var(--muted); margin: 0; line-height: 1.7; }
+.stats {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: 16px; margin-bottom: 23px;
+}
+.stat {
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: 15px; padding: 20px;
+}
+.stat-label { color: var(--muted); font-size: 13px; }
+.stat-value { font-size: 29px; font-weight: 800; margin: 12px 0 5px; }
+.stat-note { font-size: 12px; color: var(--muted); }
+.layout {
+  display: grid; grid-template-columns: 350px minmax(0, 1fr);
+  gap: 20px; align-items: start;
+}
+.card {
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: 15px; padding: 22px; margin-bottom: 20px;
+  min-width: 0;
+}
+.card-title {
+  font-size: 17px; font-weight: 800; margin: 0 0 20px;
+  display: flex; justify-content: space-between; align-items: center;
+  gap: 10px;
+}
+.field { margin-bottom: 15px; }
+.field label {
+  display: block; font-weight: 700; margin-bottom: 7px;
+  font-size: 13px;
+}
+input, select, textarea {
+  width: 100%; border: 1px solid #cbd5e1; border-radius: 8px;
+  padding: 11px 12px; background: #fff; color: var(--text);
+  outline: none; min-width: 0;
+}
+input:focus, select:focus, textarea:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px #4f46e51c;
+}
+textarea { resize: vertical; min-height: 70px; }
+.hint { font-size: 12px; color: var(--muted); line-height: 1.6; }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.btn {
+  border: 1px solid var(--border); border-radius: 8px;
+  padding: 10px 13px; background: white; color: var(--text);
+  font-weight: 700; transition: background .15s;
+}
+.btn:hover { background: #f1f5f9; }
+.btn-primary { background: var(--primary); color: white; border-color: var(--primary); }
+.btn-primary:hover { background: var(--primary-dark); color: white; }
+.btn-danger { color: var(--danger); border-color: #fecaca; }
+.btn-small { padding: 6px 9px; font-size: 12px; }
+.btn-block { width: 100%; }
+.btn-row { display: flex; gap: 8px; flex-wrap: wrap; }
+.form-actions { display: flex; gap: 8px; margin-top: 20px; }
+.form-actions button { flex: 1; }
+.notice {
+  padding: 13px 14px; border-radius: 9px; background: #eef2ff;
+  color: #3730a3; font-size: 12px; line-height: 1.7;
+  margin-bottom: 18px;
+}
+.notice.warning { background: #fff7ed; color: #9a3412; }
+.table-tools {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 12px; margin-bottom: 16px; flex-wrap: wrap;
+}
+.table-tools input { max-width: 270px; }
+.table-tools select { width: auto; }
+.table-wrap { width: 100%; overflow-x: auto; border: 1px solid var(--border); border-radius: 10px; }
+table { width: 100%; border-collapse: collapse; min-width: 850px; text-align: left; }
+thead { background: #f8fafc; }
+th {
+  padding: 14px 13px; font-size: 12px; color: #475569;
+  border-bottom: 1px solid var(--border); white-space: nowrap;
+}
+td { padding: 15px 13px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+tbody tr:last-child td { border-bottom: 0; }
+tbody tr:hover { background: #fafaff; }
+.subject { font-size: 14px; font-weight: 800; color: var(--primary-dark); }
+.date-main { font-weight: 700; white-space: nowrap; }
+.date-sub { color: var(--muted); font-size: 12px; margin-top: 5px; }
+.tag {
+  display: inline-block; border-radius: 6px; padding: 5px 8px;
+  background: #eef2ff; color: #4338ca; font-size: 11px; font-weight: 700;
+  white-space: nowrap;
+}
+.tag.soon { background: #fff7ed; color: #c2410c; }
+.tag.past { background: #f1f5f9; color: #64748b; }
+.tag.today { background: #fee2e2; color: #b91c1c; }
+.actions { display: flex; gap: 5px; }
+.empty { text-align: center; padding: 45px 20px; color: var(--muted); }
+.empty-icon { font-size: 35px; margin-bottom: 12px; }
+.empty strong { display: block; color: var(--text); margin-bottom: 8px; }
+.profile-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.profile-grid .field { margin: 0; }
+.profile-grid .field:last-child { grid-column: 1 / -1; }
+.setting-line {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 12px; padding: 13px 0; border-bottom: 1px solid var(--border);
+}
+.setting-line:last-child { border-bottom: 0; }
+.setting-line strong { display: block; margin-bottom: 5px; }
+.setting-line p { margin: 0; font-size: 12px; color: var(--muted); line-height: 1.6; }
+.switch { width: 42px; height: 24px; flex-shrink: 0; accent-color: var(--primary); }
+.footer { text-align: center; padding: 15px 0 30px; color: var(--muted); font-size: 12px; }
+.toast {
+  position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
+  background: #1e293b; color: white; border-radius: 10px;
+  padding: 13px 20px; z-index: 100; box-shadow: 0 6px 24px #0002;
+  max-width: calc(100% - 30px); line-height: 1.6;
+}
+.toast.error { background: #b91c1c; }
+.hidden { display: none !important; }
+@media (max-width: 950px) {
+  .layout { grid-template-columns: 1fr; }
+  .container { padding: 18px; }
+  .stats { gap: 10px; }
+  .stat { padding: 15px; }
+}
+@media (max-width: 560px) {
+  .topbar { padding: 14px 16px; align-items: flex-start; flex-direction: column; }
+  .container { padding: 13px; }
+  .welcome h2 { font-size: 21px; }
+  .stats { grid-template-columns: 1fr; gap: 9px; }
+  .stat { padding: 13px 16px; }
+  .stat-value { font-size: 24px; margin: 7px 0 3px; }
+  .card { padding: 16px; }
+  .form-row { grid-template-columns: 1fr; gap: 0; }
+  .table-tools { align-items: stretch; }
+  .table-tools input { max-width: none; }
+  .table-tools select { width: 100%; }
+  .profile-grid { grid-template-columns: 1fr; }
+  .profile-grid .field:last-child { grid-column: auto; }
+}
+</style>
+</head>
+<body>
+<header class="topbar">
+  <div class="brand">
+    <div class="logo">📚</div>
+    <div>
+      <h1>테스트알리미</h1>
+      <p>놓치지 않는 나만의 시험 일정</p>
+    </div>
+  </div>
+  <div class="top-actions">
+    <button class="btn" id="exportBtn">📅 캘린더 내보내기</button>
+    <button class="btn" id="backupBtn">💾 백업</button>
+    <button class="btn" id="restoreBtn">📂 백업 불러오기</button>
+    <input type="file" id="restoreFile" accept=".json,application/json" class="hidden">
+  </div>
+</header>
+
+<main class="container">
+  <section class="welcome">
+    <h2>나의 시험 일정 관리</h2>
+    <p>시험 정보를 한곳에서 관리하고, 중요한 시험을 놓치지 마세요.<br>
+    입력한 정보는 현재 브라우저에 자동 저장됩니다.</p>
+  </section>
+
+  <section class="stats">
+    <div class="stat">
+      <div class="stat-label">전체 시험</div>
+      <div class="stat-value" id="totalCount">0개</div>
+      <div class="stat-note">등록된 시험 일정</div>
+    </div>
+    <div class="stat">
+      <div class="stat-label">다가오는 시험</div>
+      <div class="stat-value" id="upcomingCount">0개</div>
+      <div class="stat-note">오늘 이후 예정된 시험</div>
+    </div>
+    <div class="stat">
+      <div class="stat-label">가장 가까운 시험</div>
+      <div class="stat-value" id="nextExam">없음</div>
+      <div class="stat-note" id="nextExamNote">시험 일정을 등록해 주세요.</div>
+    </div>
+  </section>
+
+  <div class="layout">
+    <aside>
+      <section class="card">
+        <h3 class="card-title">👤 학생 정보</h3>
+        <div class="profile-grid">
+          <div class="field">
+            <label for="studentId">학번</label>
+            <input id="studentId" maxlength="30" placeholder="예: 20261234">
+          </div>
+          <div class="field">
+            <label for="studentName">이름</label>
+            <input id="studentName" maxlength="30" placeholder="이름 입력">
+          </div>
+          <div class="field">
+            <label for="semester">학기</label>
+            <select id="semester">
+              <option value="">학기 선택</option>
+              <option>2026학년도 1학기</option>
+              <option>2026학년도 여름 계절학기</option>
+              <option>2026학년도 2학기</option>
+              <option>2026학년도 겨울 계절학기</option>
+              <option>2027학년도 1학기</option>
+              <option>2027학년도 2학기</option>
+            </select>
+          </div>
+        </div>
+        <p class="hint" style="margin-top:13px">정보를 변경하면 자동 저장됩니다.</p>
+      </section>
+
+      <section class="card" id="examFormCard">
+        <h3 class="card-title" id="formTitle">✏️ 시험 일정 등록</h3>
+        <form id="examForm">
+          <div class="field">
+            <label for="subject">시험 과목명 *</label>
+            <input id="subject" maxlength="100" required placeholder="예: 자료구조">
+          </div>
+          <div class="field">
+            <label for="examDate">시험 날짜 *</label>
+            <input id="examDate" type="date" required>
+          </div>
+          <div class="form-row">
+            <div class="field">
+              <label for="startTime">시작 시간 *</label>
+              <input id="startTime" type="time" required>
+            </div>
+            <div class="field">
+              <label for="endTime">종료 시간</label>
+              <input id="endTime" type="time">
+            </div>
+          </div>
+          <div class="field">
+            <label for="location">시험 장소 *</label>
+            <input id="location" maxlength="150" required placeholder="예: 공학관 301호">
+          </div>
+          <div class="field">
+            <label for="materials">준비물</label>
+            <textarea id="materials" maxlength="500" placeholder="예: 학생증, 검정 볼펜, 계산기"></textarea>
+          </div>
+          <div class="field">
+            <label for="memo">메모 (선택)</label>
+            <textarea id="memo" maxlength="500" placeholder="시험 범위, 유의사항 등"></textarea>
+          </div>
+          <div class="form-actions">
+            <button type="submit" class="btn btn-primary" id="saveExamBtn">시험 등록</button>
+            <button type="button" class="btn hidden" id="cancelEditBtn">취소</button>
+          </div>
+        </form>
+      </section>
+
+      <section class="card">
+        <h3 class="card-title">🔔 알림 설정</h3>
+        <div class="notice">
+          전날 알림은 이 앱을 열어 둔 상태에서 동작합니다. 브라우저 알림 권한을 허용해 주세요.
+        </div>
+        <div class="setting-line">
+          <div>
+            <strong>시험 전날 알림</strong>
+            <p>시험 하루 전, 브라우저 알림 표시</p>
+          </div>
+          <input type="checkbox" id="reminderEnabled" class="switch" checked aria-label="시험 전날 알림 사용">
+        </div>
+        <div style="margin-top:15px">
+          <button class="btn btn-block" id="notificationBtn">🔔 알림 권한 설정</button>
+        </div>
+        <p class="hint" id="notificationStatus" style="margin-top:12px">
+          알림 권한 상태를 확인해 주세요.
+        </p>
+      </section>
+    </aside>
+
+    <section>
+      <section class="card">
+        <h3 class="card-title">
+          📋 시험 일정표
+          <span class="tag" id="semesterBadge">전체 일정</span>
+        </h3>
+        <div class="table-tools">
+          <input type="search" id="searchInput" placeholder="🔎 과목명, 장소, 준비물 검색">
+          <select id="sortFilter" aria-label="시험 일정 정렬">
+            <option value="asc">시험 날짜 빠른순</option>
+            <option value="desc">시험 날짜 늦은순</option>
+            <option value="upcoming">다가오는 시험 우선</option>
+          </select>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>시험 과목</th>
+                <th>날짜 / 시간</th>
+                <th>장소</th>
+                <th>준비물</th>
+                <th>상태</th>
+                <th>관리</th>
+              </tr>
+            </thead>
+            <tbody id="examTableBody"></tbody>
+          </table>
+          <div id="emptyState" class="empty">
+            <div class="empty-icon">📝</div>
+            <strong>아직 등록된 시험이 없습니다.</strong>
+            왼쪽에서 첫 시험 일정을 등록해 보세요.
+          </div>
+        </div>
+        <p class="hint" style="margin-top:14px">
+          시험 과목명을 누르면 메모를 확인할 수 있습니다. 날짜와 시간은 입력한 현지 시간을 기준으로 표시합니다.
+        </p>
+      </section>
+
+      <section class="card">
+        <h3 class="card-title">💡 사용 안내</h3>
+        <div class="notice">
+          <strong>자동 저장</strong><br>
+          학생 정보와 시험 일정은 브라우저에 저장됩니다. 같은 브라우저와 기기에서 다시 열면 데이터를 불러옵니다.
+        </div>
+        <div class="notice">
+          <strong>휴대폰 캘린더 연동</strong><br>
+          '캘린더 내보내기'로 생성한 .ics 파일을 휴대폰에서 열어 캘린더에 추가하세요. 캘린더 앱 자체의 알림 설정도 확인해 주세요.
+        </div>
+        <div class="notice warning">
+          <strong>데이터 주의</strong><br>
+          브라우저 데이터 삭제, 시크릿 모드 종료, 다른 기기 사용 시 저장된 일정이 없을 수 있습니다. 중요한 일정은 백업 파일도 보관하세요.
+        </div>
+        <div class="btn-row">
+          <button class="btn" id="clearAllBtn">모든 시험 일정 삭제</button>
+          <button class="btn" id="resetProfileBtn">학생 정보 초기화</button>
+        </div>
+      </section>
+    </section>
+  </div>
+  <footer class="footer">테스트알리미 · 나의 시험 일정을 한눈에</footer>
+</main>
+
+<div id="toast" class="toast hidden" role="status" aria-live="polite"></div>
+
+<script>
+"use strict";
+
+const STORAGE_KEY = "testAlertAppData_v1";
+const REMINDER_KEY = "testAlertReminderLog_v1";
+
+const $ = id => document.getElementById(id);
+
+let state = {
+  profile: { studentId: "", studentName: "", semester: "" },
+  exams: [],
+  reminderEnabled: true
+};
+let editingId = null;
+let toastTimer = null;
+let lastStorageWarning = false;
+
+function makeId() {
+  if (window.crypto && crypto.randomUUID) return crypto.randomUUID();
+  return Date.now().toString(36) + Math.random().toString(36).slice(2);
+}
+
+function showToast(message, isError = false) {
+  const el = $("toast");
+  el.textContent = message;
+  el.classList.remove("hidden", "error");
+  if (isError) el.classList.add("error");
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => el.classList.add("hidden"), 3500);
+}
+
+function safeText(value) {
+  return String(value ?? "").replace(/[&<>"']/g, ch => ({
+    "&": "&amp;", "<": "&lt;", ">": "&gt;",
+    '"': "&quot;", "'": "&#39;"
+  })[ch]);
+}
+
+function localDateString(date = new Date()) {
+  const y = date.getFullYear();
+  const m = String(date.getMonth() + 1).padStart(2, "0");
+  const d = String(date.getDate()).padStart(2, "0");
+  return `${y}-${m}-${d}`;
+}
+
+function loadData() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return;
+    const parsed = JSON.parse(raw);
+
+    if (parsed && typeof parsed === "object") {
+      const p = parsed.profile || {};
+      state.profile = {
+        studentId: String(p.studentId || ""),
+        studentName: String(p.studentName || ""),
+        semester: String(p.semester || "")
+      };
+      state.reminderEnabled = parsed.reminderEnabled !== false;
+      state.exams = Array.isArray(parsed.exams)
+        ? parsed.exams.filter(e =>
+            e && typeof e.id === "string" &&
+            typeof e.subject === "string" &&
+            /^\d{4}-\d{2}-\d{2}$/.test(e.date) &&
+            /^\d{2}:\d{2}$/.test(e.startTime) &&
+            typeof e.location === "string"
+          ).map(e => ({
+            id: e.id,
+            subject: e.subject.slice(0, 100),
+            date: e.date,
+            startTime: e.startTime,
+            endTime: typeof e.endTime === "string" ? e.endTime : "",
+            location: e.location.slice(0, 150),
+            materials: String(e.materials || "").slice(0, 500),
+            memo: String(e.memo || "").slice(0, 500)
+          }))
+        : [];
+    }
+  } catch (error) {
+    console.error(error);
+    showToast("저장 데이터를 읽지 못했습니다. 백업 파일이 있다면 복원해 주세요.", true);
+  }
+}
+
+function saveData() {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    lastStorageWarning = false;
+    return true;
+  } catch (error) {
+    console.error(error);
+    if (!lastStorageWarning) {
+      showToast("저장에 실패했습니다. 브라우저 저장 공간과 설정을 확인해 주세요.", true);
+      lastStorageWarning = true;
+    }
+    return false;
+  }
+}
+
+function loadProfileToForm() {
+  $("studentId").value = state.profile.studentId;
+  $("studentName").value = state.profile.studentName;
+  $("semester").value = state.profile.semester;
+  $("reminderEnabled").checked = state.reminderEnabled;
+}
+
+function saveProfile() {
+  state.profile = {
+    studentId: $("studentId").value.trim(),
+    studentName: $("studentName").value.trim(),
+    semester: $("semester").value
+  };
+  saveData();
+  renderAll();
+}
+
+function getExamDateTime(exam) {
+  return new Date(`${exam.date}T${exam.startTime}:00`);
+}
+
+function getStatus(exam) {
+  const today = localDateString();
+  if (exam.date < today) return { label: "종료", cls: "past" };
+  if (exam.date === today) return { label: "오늘", cls: "today" };
+
+  const days = Math.ceil(
+    (new Date(exam.date + "T00:00:00") - new Date(today + "T00:00:00"))
+    / 86400000
+  );
+  if (days === 1) return { label: "내일", cls: "soon" };
+  if (days <= 7) return { label: `D-${days}`, cls: "soon" };
+  return { label: `D-${days}`, cls: "" };
+}
+
+function formatDate(date) {
+  const d = new Date(date + "T00:00:00");
+  const weekdays = ["일", "월", "화", "수", "목", "금", "토"];
+  return `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, "0")}.${String(d.getDate()).padStart(2, "0")} (${weekdays[d.getDay()]})`;
+}
+
+function renderStats() {
+  const today = localDateString();
+  const future = state.exams
+    .filter(e => e.date >= today)
+    .sort((a, b) => getExamDateTime(a) - getExamDateTime(b));
+
+  $("totalCount").textContent = `${state.exams.length}개`;
+  $("upcomingCount").textContent = `${future.length}개`;
+
+  if (future.length) {
+    $("nextExam").textContent = future[0].subject;
+    $("nextExamNote").textContent =
+      `${formatDate(future[0].date)} ${future[0].startTime}`;
+  } else {
+    $("nextExam").textContent = "없음";
+    $("nextExamNote").textContent = "예정된 시험이 없습니다.";
+  }
+
+  $("semesterBadge").textContent = state.profile.semester || "전체 일정";
+}
+
+function renderTable() {
+  const tbody = $("examTableBody");
+  const query = $("searchInput").value.trim().toLocaleLowerCase("ko");
+  const sort = $("sortFilter").value;
+
+  let exams = state.exams.filter(e => {
+    const content = [e.subject, e.location, e.materials, e.memo].join(" ").toLocaleLowerCase("ko");
+    return content.includes(query);
+  });
+
+  exams.sort((a, b) => {
+    const diff = getExamDateTime(a) - getExamDateTime(b);
+    if (sort === "desc") return -diff;
+    if (sort === "upcoming") {
+      const today = localDateString();
+      const aFuture = a.date >= today;
+      const bFuture = b.date >= today;
+      if (aFuture !== bFuture) return aFuture ? -1 : 1;
+    }
+    return diff;
+  });
+
+  tbody.innerHTML = "";
+  $("emptyState").classList.toggle("hidden", exams.length > 0);
+
+  if (exams.length === 0) {
+    $("emptyState").innerHTML = query
+      ? '<div class="empty-icon">🔎</div><strong>검색 결과가 없습니다.</strong>다른 검색어를 입력해 주세요.'
+      : '<div class="empty-icon">📝</div><strong>아직 등록된 시험이 없습니다.</strong>왼쪽에서 첫 시험 일정을 등록해 보세요.';
+  }
+
+  for (const exam of exams) {
+    const status = getStatus(exam);
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+      <td>
+        <button type="button" class="btn btn-small subject"
+          data-action="memo" data-id="${safeText(exam.id)}"
+          title="메모 확인">${safeText(exam.subject)}</button>
+      </td>
+      <td>
+        <div class="date-main">${safeText(formatDate(exam.date))}</div>
+        <div class="date-sub">${safeText(exam.startTime)}${exam.endTime ? " ~ " + safeText(exam.endTime) : ""}</div>
+      </td>
+      <td>${safeText(exam.location)}</td>
+      <td>${safeText(exam.materials || "-")}</td>
+      <td><span class="tag ${status.cls}">${safeText(status.label)}</span></td>
+      <td>
+        <div class="actions">
+          <button type="button" class="btn btn-small" data-action="edit" data-id="${safeText(exam.id)}">수정</button>
+          <button type="button" class="btn btn-small btn-danger" data-action="delete" data-id="${safeText(exam.id)}">삭제</button>
+        </div>
+      </td>`;
+    tbody.appendChild(tr);
+  }
+}
+
+function renderNotificationStatus() {
+  const el = $("notificationStatus");
+  if (!("Notification" in window)) {
+    el.textContent = "이 브라우저는 웹 알림을 지원하지 않습니다. 캘린더 앱 알림을 이용해 주세요.";
+  } else if (Notification.permission === "granted") {
+    el.textContent = "알림 권한이 허용되었습니다. 앱이 열려 있을 때 전날 알림을 확인합니다.";
+  } else if (Notification.permission === "denied") {
+    el.textContent = "알림이 차단되어 있습니다. 브라우저 사이트 설정에서 권한을 변경해 주세요.";
+  } else {
+    el.textContent = "아직 알림 권한이 설정되지 않았습니다.";
+  }
+}
+
+function renderAll() {
+  renderStats();
+  renderTable();
+  renderNotificationStatus();
+}
+
+function resetForm() {
+  editingId = null;
+  $("examForm").reset();
+  $("formTitle").textContent = "✏️ 시험 일정 등록";
+  $("saveExamBtn").textContent = "시험 등록";
+  $("cancelEditBtn").classList.add("hidden");
+}
+
+function validateExam(exam) {
+  if (!exam.subject.trim()) return "시험 과목명을 입력해 주세요.";
+  if (!exam.date || !/^\d{4}-\d{2}-\d{2}$/.test(exam.date)) {
+    return "올바른 시험 날짜를 선택해 주세요.";
+  }
+  const date = new Date(exam.date + "T00:00:00");
+  if (Number.isNaN(date.getTime()) || localDateString(date) !== exam.date) {
+    return "존재하지 않는 날짜입니다.";
+  }
+  if (!exam.startTime || !/^\d{2}:\d{2}$/.test(exam.startTime)) {
+    return "시험 시작 시간을 입력해 주세요.";
+  }
+  if (exam.endTime && exam.endTime <= exam.startTime) {
+    return "종료 시간은 시작 시간보다 늦어야 합니다.";
+  }
+  if (!exam.location.trim()) return "시험 장소를 입력해 주세요.";
+  return "";
+}
+
+$("examForm").addEventListener("submit", event => {
+  event.preventDefault();
+
+  const exam = {
+    id: editingId || makeId(),
+    subject: $("subject").value.trim(),
+    date: $("examDate").value,
+    startTime: $("startTime").value,
+    endTime: $("endTime").value,
+    location: $("location").value.trim(),
+    materials: $("materials").value.trim(),
+    memo: $("memo").value.trim()
+  };
+
+  const error = validateExam(exam);
+  if (error) {
+    showToast(error, true);
+    return;
+  }
+
+  if (editingId) {
+    const index = state.exams.findIndex(e => e.id === editingId);
+    if (index >= 0) state.exams[index] = exam;
+  } else {
+    state.exams.push(exam);
+  }
+
+  if (saveData()) {
+    showToast(editingId ? "시험 일정이 수정되었습니다." : "시험 일정이 등록되었습니다.");
+    resetForm();
+    renderAll();
+  }
+});
+
+$("cancelEditBtn").addEventListener("click", resetForm);
+
+$("examTableBody").addEventListener("click", event => {
+  const button = event.target.closest("button[data-action]");
+  if (!button) return;
+
+  const exam = state.exams.find(e => e.id === button.dataset.id);
+  if (!exam) return;
+
+  if (button.dataset.action === "edit") {
+    editingId = exam.id;
+    $("subject").value = exam.subject;
+    $("examDate").value = exam.date;
+    $("startTime").value = exam.startTime;
+    $("endTime").value = exam.endTime;
+    $("location").value = exam.location;
+    $("materials").value = exam.materials;
+    $("memo").value = exam.memo;
+    $("formTitle").textContent = "✏️ 시험 일정 수정";
+    $("saveExamBtn").textContent = "수정 완료";
+    $("cancelEditBtn").classList.remove("hidden");
+    $("examFormCard").scrollIntoView({ behavior: "smooth", block: "start" });
+    $("subject").focus();
+  }
+
+  if (button.dataset.action === "delete") {
+    if (!confirm(`'${exam.subject}' 시험 일정을 삭제할까요?`)) return;
+    state.exams = state.exams.filter(e => e.id !== exam.id);
+    saveData();
+    renderAll();
+    showToast("시험 일정이 삭제되었습니다.");
+    if (editingId === exam.id) resetForm();
+  }
+
+  if (button.dataset.action === "memo") {
+    alert(
+      `과목: ${exam.subject}\n` +
+      `날짜: ${formatDate(exam.date)}\n` +
+      `시간: ${exam.startTime}${exam.endTime ? " ~ " + exam.endTime : ""}\n` +
+      `장소: ${exam.location}\n` +
+      `준비물: ${exam.materials || "없음"}\n\n` +
+      `메모:\n${exam.memo || "등록된 메모가 없습니다."}`
+    );
+  }
+});
+
+$("studentId").addEventListener("change", saveProfile);
+$("studentName").addEventListener("change", saveProfile);
+$("semester").addEventListener("change", saveProfile);
+$("searchInput").addEventListener("input", renderTable);
+$("sortFilter").addEventListener("change", renderTable);
+
+$("reminderEnabled").addEventListener("change", () => {
+  state.reminderEnabled = $("reminderEnabled").checked;
+  saveData();
+  if (state.reminderEnabled) checkReminders();
+  showToast(state.reminderEnabled ? "전날 알림을 사용합니다." : "전날 알림을 껐습니다.");
+});
+
+$("notificationBtn").addEventListener("click", async () => {
+  if (!("Notification" in window)) {
+    showToast("이 브라우저는 웹 알림을 지원하지 않습니다.", true);
+    return;
+  }
+
+  if (Notification.permission === "granted") {
+    showToast("브라우저 알림 권한이 이미 허용되어 있습니다.");
+  } else if (Notification.permission === "denied") {
+    showToast("브라우저 주소창 옆 사이트 설정에서 알림을 허용해 주세요.", true);
+  } else {
+    try {
+      const permission = await Notification.requestPermission();
+      renderNotificationStatus();
+      if (permission === "granted") {
+        showToast("알림 권한이 허용되었습니다.");
+        checkReminders();
+      } else {
+        showToast("알림 권한이 허용되지 않았습니다.", true);
+      }
+    } catch (error) {
+      showToast("알림 권한을 요청하지 못했습니다. 브라우저 설정을 확인해 주세요.", true);
+    }
+  }
+});
+
+function getReminderLog() {
+  try {
+    return JSON.parse(localStorage.getItem(REMINDER_KEY) || "{}");
+  } catch {
+    return {};
+  }
+}
+
+function checkReminders() {
+  if (!state.reminderEnabled) return;
+  if (!("Notification" in window) || Notification.permission !== "granted") return;
+
+  const today = localDateString();
+  const tomorrow = new Date();
+  tomorrow.setDate(tomorrow.getDate() + 1);
+  const tomorrowStr = localDateString(tomorrow);
+  const log = getReminderLog();
+  let changed = false;
+
+  for (const exam of state.exams) {
+    if (exam.date !== tomorrowStr) continue;
+
+    // 같은 과목은 같은 날짜에 한 번만 알립니다.
+    const key = `${exam.id}_${today}`;
+    if (log[key]) continue;
+
+    try {
+      const notification = new Notification(`내일 시험: ${exam.subject}`, {
+        body: `시간: ${exam.startTime}${exam.endTime ? " ~ " + exam.endTime : ""}\n장소: ${exam.location}\n준비물: ${exam.materials || "별도 준비물 없음"}`,
+        tag: key
+      });
+      notification.onclick = () => {
+        window.focus();
+        notification.close();
+      };
+      log[key] = true;
+      changed = true;
+    } catch (error) {
+      console.error("알림 생성 실패", error);
+    }
+  }
+
+  if (changed) {
+    try {
+      // 오래된 기록이 지나치게 쌓이지 않도록 최근 기록만 유지합니다.
+      const keys = Object.keys(log);
+      if (keys.length > 300) {
+        keys.slice(0, keys.length - 300).forEach(key => delete log[key]);
+      }
+      localStorage.setItem(REMINDER_KEY, JSON.stringify(log));
+    } catch (error) {
+      console.error(error);
+    }
+  }
+}
+
+function downloadBlob(blob, filename) {
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+
+function icsEscape(text) {
+  return String(text || "")
+    .replace(/\\/g, "\\\\")
+    .replace(/\n/g, "\\n")
+    .replace(/,/g, "\\,")
+    .replace(/;/g, "\\;");
+}
+
+function toIcsDate(date, time) {
+  return date.replace(/-/g, "") + "T" + time.replace(":", "") + "00";
+}
+
+function getEndTime(exam) {
+  if (exam.endTime) return exam.endTime;
+  const [h, m] = exam.startTime.split(":").map(Number);
+  const d = new Date(2000, 0, 1, h, m + 60);
+  return `${String(d.getHours()).padStart(2, "0")}:${String(d.getMinutes()).padStart(2, "0")}`;
+}
+
+function exportCalendar() {
+  if (state.exams.length === 0) {
+    showToast("내보낼 시험 일정이 없습니다.", true);
+    return;
+  }
+
+  const lines = [
+    "BEGIN:VCALENDAR",
+    "VERSION:2.0",
+    "PRODID:-//TestAlert//Korean Exam Schedule//KO",
+    "CALSCALE:GREGORIAN",
+    "METHOD:PUBLISH"
+  ];
+
+  for (const exam of state.exams) {
+    const endTime = getEndTime(exam);
+    const description = [
+      `과목: ${exam.subject}`,
+      `준비물: ${exam.materials || "없음"}`,
+      `메모: ${exam.memo || "없음"}`,
+      `학생: ${state.profile.studentName || "미입력"}`,
+      `학기: ${state.profile.semester || "미입력"}`
+    ].join("\n");
+
+    lines.push(
+      "BEGIN:VEVENT",
+      `UID:${exam.id}@test-alert.local`,
+      `DTSTAMP:${new Date().toISOString().replace(/[-:]/g, "").replace(/\.\d{3}/, "")}`,
+      `DTSTART:${toIcsDate(exam.date, exam.startTime)}`,
+      `DTEND:${toIcsDate(exam.date, endTime)}`,
+      `SUMMARY:${icsEscape("[시험] " + exam.subject)}`,
+      `LOCATION:${icsEscape(exam.location)}`,
+      `DESCRIPTION:${icsEscape(description)}`,
+      // 전날 오전 9시 알림: 캘린더 앱이 지원하면 사용됩니다.
+      "BEGIN:VALARM",
+      "TRIGGER:-P1D",
+      "ACTION:DISPLAY",
+      `DESCRIPTION:${icsEscape("내일 시험: " + exam.subject)}`,
+      "END:VALARM",
+      "END:VEVENT"
+    );
+  }
+
+  lines.push("END:VCALENDAR");
+
+  // 일부 캘린더에서 한글이 깨지지 않도록 UTF-8 BOM을 붙입니다.
+  const blob = new Blob(["\uFEFF" + lines.join("\r\n") + "\r\n"], {
+    type: "text/calendar;charset=utf-8"
+  });
+  downloadBlob(blob, "테스트알리미_시험일정.ics");
+  showToast("캘린더 파일을 만들었습니다. 파일을 열어 일정을 가져오세요.");
+}
+
+$("exportBtn").addEventListener("click", exportCalendar);
+
+$("backupBtn").addEventListener("click", () => {
+  const blob = new Blob([JSON.stringify(state, null, 2)], {
+    type: "application/json;charset=utf-8"
+  });
+  downloadBlob(blob, `테스트알리미_백업_${localDateString()}.json`);
+  showToast("백업 파일을 저장했습니다.");
+});
+
+$("restoreBtn").addEventListener("click", () => $("restoreFile").click());
+
+$("restoreFile").addEventListener("change", async event => {
+  const file = event.target.files[0];
+  if (!file) return;
+
+  try {
+    const text = await file.text();
+    const parsed = JSON.parse(text);
+
+    if (!parsed || typeof parsed !== "object" ||
+        !Array.isArray(parsed.exams) ||
+        typeof parsed.profile !== "object" || !parsed.profile) {
+      throw new Error("형식이 올바르지 않습니다.");
+    }
+
+    const restored = {
+      profile: {
+        studentId: String(parsed.profile.studentId || "").slice(0, 30),
+        studentName: String(parsed.profile.studentName || "").slice(0, 30),
+        semester: String(parsed.profile.semester || "").slice(0, 100)
+      },
+      reminderEnabled: parsed.reminderEnabled !== false,
+      exams: []
+    };
+
+    for (const e of parsed.exams) {
+      if (!e || typeof e.subject !== "string" ||
+          typeof e.date !== "string" ||
+          typeof e.startTime !== "string" ||
+          typeof e.location !== "string") {
+        throw new Error("시험 일정에 잘못된 항목이 있습니다.");
+      }
+      const candidate = {
+        id: typeof e.id === "string" ? e.id : makeId(),
+        subject: e.subject.trim().slice(0, 100),
+        date: e.date,
+        startTime: e.startTime,
+        endTime: String(e.endTime || ""),
+        location: e.location.trim().slice(0, 150),
+        materials: String(e.materials || "").slice(0, 500),
+        memo: String(e.memo || "").slice(0, 500)
+      };
+      const error = validateExam(candidate);
+      if (error) throw new Error(`${candidate.subject || "시험"}: ${error}`);
+      restored.exams.push(candidate);
+    }
+
+    if (!confirm(`백업에서 시험 ${restored.exams.length}개를 불러옵니다.\n현재 학생 정보와 일정은 백업 내용으로 교체됩니다. 계속할까요?`)) {
+      event.target.value = "";
+      return;
+    }
+
+    state = restored;
+    if (!saveData()) throw new Error("브라우저 저장소에 저장하지 못했습니다.");
+    loadProfileToForm();
+    resetForm();
+    renderAll();
+    showToast("백업 데이터를 복원했습니다.");
+  } catch (error) {
+    showToast("백업 파일을 불러오지 못했습니다: " + error.message, true);
+  } finally {
+    event.target.value = "";
+  }
+});
+
+$("clearAllBtn").addEventListener("click", () => {
+  if (!state.exams.length) {
+    showToast("삭제할 시험 일정이 없습니다.");
+    return;
+  }
+  if (!confirm(`등록된 시험 ${state.exams.length}개를 모두 삭제할까요?\n삭제한 일정은 복구할 수 없습니다.`)) return;
+  state.exams = [];
+  saveData();
+  resetForm();
+  renderAll();
+  showToast("모든 시험 일정을 삭제했습니다.");
+});
+
+$("resetProfileBtn").addEventListener("click", () => {
+  if (!confirm("학번, 이름, 학기 정보를 초기화할까요? 시험 일정은 삭제되지 않습니다.")) return;
+  state.profile = { studentId: "", studentName: "", semester: "" };
+  saveData();
+  loadProfileToForm();
+  renderAll();
+  showToast("학생 정보를 초기화했습니다.");
+});
+
+// 앱 실행 중에는 1분마다 전날 알림을 확인합니다.
+// 브라우저가 닫혀 있거나 기기가 꺼져 있으면 실행되지 않습니다.
+function startReminderChecks() {
+  checkReminders();
+  setInterval(checkReminders, 60 * 1000);
+}
+
+document.addEventListener("visibilitychange", () => {
+  if (!document.hidden) {
+    checkReminders();
+    renderAll();
+  }
+});
+
+loadData();
+loadProfileToForm();
+renderAll();
+startReminderChecks();
+</script>
+</body>
+</html>
